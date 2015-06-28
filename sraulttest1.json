@@ -1,0 +1,485 @@
+{
+	"application": {
+		"title": "sraulttest1",
+		"meta_title": "Example application",
+		"meta_description": "Meteor Kitchen - example application",
+		"theme": "bootswatch-cyborg",
+		"roles": [
+			"admin",
+			"user",
+			"blocked",
+			"client",
+			"partner"
+		],
+		"default_role": "user",
+		"collections": [
+			{
+				"name": "Plan",
+				"owner_field": "owner",
+				"roles_allowed_to_insert": [
+					"admin"
+				],
+				"roles_allowed_to_update": [
+					"admin"
+				],
+				"roles_allowed_to_delete": [
+					"admin"
+				],
+				"fields": [
+					{
+						"name": "name",
+						"title": "Nom du Plan",
+						"type": "string",
+						"required": true,
+						"exportable": true
+					}
+				]
+			}
+		],
+		"public_zone": {
+			"pages": [
+				{
+					"name": "home_public",
+					"components": [
+						{
+							"name": "home_jumbotron",
+							"title": "Example application",
+							"type": "jumbotron",
+							"text": "<b>This is example application built with <a href=\"http://www.meteorkitchen.com\" target=\"_blank\">meteor-kitchen</a> code generator without manual coding.</b><br />It demonstrates simple application with user account system and admin panel.<br />Source code (input file for generator) is <a href=\"https://github.com/perak/kitchen-examples/tree/master/example-admin\" target=\"_blank\">here</a>.",
+							"button_title": "Continue &raquo;",
+							"button_route": "login"
+						}
+					],
+					"type": "page"
+				},
+				{
+					"name": "login",
+					"template": "login",
+					"type": "page"
+				},
+				{
+					"name": "register",
+					"template": "register",
+					"type": "page"
+				},
+				{
+					"name": "forgot_password",
+					"template": "forgot_password",
+					"type": "page"
+				},
+				{
+					"name": "reset_password",
+					"template": "reset_password",
+					"route_params": [
+						"resetPasswordToken"
+					],
+					"type": "page"
+				}
+			],
+			"menus": [
+				{
+					"name": "left_menu",
+					"class": "nav navbar-nav",
+					"dest_selector": "#menu",
+					"items": [
+						{
+							"title": "Home",
+							"route": "home_public"
+						}
+					],
+					"type": "menu"
+				},
+				{
+					"name": "right_menu",
+					"class": "nav navbar-nav navbar-right",
+					"dest_selector": "#menu",
+					"items": [
+						{
+							"title": "Register",
+							"route": "register"
+						},
+						{
+							"title": "Login",
+							"route": "login"
+						}
+					],
+					"type": "menu"
+				}
+			],
+			"type": "zone"
+		},
+		"private_zone": {
+			"pages": [
+				{
+					"name": "home_private",
+					"title": "Welcome {{userFullName}}!",
+					"type": "page"
+				},
+				{
+					"name": "admin",
+					"roles": [
+						"admin"
+					],
+					"pages": [
+						{
+							"name": "users",
+							"components": [
+								{
+									"name": "view",
+									"type": "data_view",
+									"title": "Users",
+									"text_if_empty": "No users yet",
+									"query": {
+										"name": "admin_users",
+										"collection": "users",
+										"filter": {},
+										"find_one": false,
+										"options": {},
+										"params": []
+									},
+									"fields": [
+										{
+											"name": "profile.name",
+											"title": "Name",
+											"type": "string"
+										},
+										{
+											"name": "profile.email",
+											"title": "E-mail",
+											"type": "string"
+										},
+										{
+											"name": "roles",
+											"title": "Role",
+											"type": "string"
+										}
+									],
+									"insert_route": "admin.users.insert",
+									"edit_route": "admin.users.edit",
+									"edit_route_params": [
+										{
+											"name": "userId",
+											"value": "this._id"
+										}
+									],
+									"details_route": "admin.users.details",
+									"details_route_params": [
+										{
+											"name": "userId",
+											"value": "this._id"
+										}
+									]
+								}
+							],
+							"pages": [
+								{
+									"name": "details",
+									"route_params": [
+										"userId"
+									],
+									"components": [
+										{
+											"name": "details_form",
+											"type": "form",
+											"mode": "read_only",
+											"title": "User details",
+											"query": {
+												"name": "admin_user",
+												"collection": "users",
+												"filter": {
+													"_id": ":userId"
+												},
+												"find_one": false,
+												"options": {},
+												"params": []
+											},
+											"fields": [
+												{
+													"name": "profile.name",
+													"title": "Name",
+													"type": "string"
+												},
+												{
+													"name": "profile.email",
+													"title": "E-mail",
+													"type": "email"
+												},
+												{
+													"name": "roles",
+													"title": "Role",
+													"type": "string"
+												}
+											],
+											"close_route": "admin.users",
+											"back_route": "admin.users"
+										}
+									],
+									"type": "page"
+								},
+								{
+									"name": "insert",
+									"components": [
+										{
+											"name": "insert_form",
+											"type": "form",
+											"mode": "insert",
+											"title": "Add new user",
+											"submit_route": "admin.users",
+											"cancel_route": "admin.users",
+											"query": {
+												"name": "users_null",
+												"collection": "users",
+												"filter": {
+													"_id": null
+												},
+												"find_one": false,
+												"options": {},
+												"params": []
+											},
+											"fields": [
+												{
+													"name": "profile.name",
+													"title": "Name",
+													"required": true,
+													"type": "string"
+												},
+												{
+													"name": "profile.email",
+													"title": "E-mail",
+													"type": "email",
+													"required": true
+												},
+												{
+													"name": "password",
+													"title": "Password",
+													"input": "password",
+													"required": true,
+													"type": "string"
+												}
+											]
+										}
+									],
+									"type": "page"
+								},
+								{
+									"name": "edit",
+									"route_params": [
+										"userId"
+									],
+									"components": [
+										{
+											"name": "edit_form",
+											"type": "form",
+											"mode": "update",
+											"title": "Edit user",
+											"submit_route": "admin.users",
+											"cancel_route": "admin.users",
+											"query": {
+												"name": "admin_user",
+												"collection": "users",
+												"filter": {
+													"_id": ":userId"
+												},
+												"find_one": false,
+												"options": {},
+												"params": []
+											},
+											"fields": [
+												{
+													"name": "profile.name",
+													"title": "Name",
+													"required": true,
+													"type": "string"
+												},
+												{
+													"name": "profile.email",
+													"title": "E-mail",
+													"type": "email",
+													"required": true
+												},
+												{
+													"name": "roles",
+													"type": "array",
+													"title": "Role",
+													"input": "radio",
+													"input_items": [
+														{
+															"value": "user",
+															"title": "User"
+														},
+														{
+															"value": "admin",
+															"title": "Admin"
+														},
+														{
+															"value": "blocked",
+															"title": "Blocked"
+														}
+													]
+												}
+											]
+										}
+									],
+									"type": "page"
+								}
+							],
+							"type": "page"
+						}
+					],
+					"menus": [
+						{
+							"name": "side_menu",
+							"class": "nav nav-stacked nav-pills",
+							"items": [
+								{
+									"title": "Users",
+									"route": "admin.users"
+								}
+							],
+							"type": "menu"
+						}
+					],
+					"type": "page"
+				},
+				{
+					"name": "user_settings",
+					"roles": [
+						"user",
+						"admin"
+					],
+					"pages": [
+						{
+							"name": "profile",
+							"components": [
+								{
+									"name": "edit_form",
+									"type": "form",
+									"mode": "update",
+									"title": "Edit your profile",
+									"submit_route": "user_settings.profile",
+									"query": {
+										"name": "current_user_data",
+										"collection": "users",
+										"filter": {
+											"_id": "Meteor.userId()"
+										},
+										"find_one": true,
+										"options": {},
+										"params": []
+									},
+									"fields": [
+										{
+											"name": "profile.name",
+											"title": "Name",
+											"required": true,
+											"type": "string"
+										},
+										{
+											"name": "profile.email",
+											"title": "E-mail",
+											"type": "email",
+											"required": true
+										},
+										{
+											"name": "profile.facebook",
+											"title": "Facebook URL",
+											"type": "string"
+										},
+										{
+											"name": "profile.google",
+											"title": "Google+ URL",
+											"type": "string"
+										},
+										{
+											"name": "profile.twitter",
+											"title": "Twitter ID",
+											"type": "string"
+										},
+										{
+											"name": "profile.website",
+											"title": "Website URL",
+											"type": "string"
+										}
+									]
+								}
+							],
+							"type": "page"
+						},
+						{
+							"name": "change_pass",
+							"template": "change_pass",
+							"type": "page"
+						}
+					],
+					"menus": [
+						{
+							"name": "side_menu",
+							"class": "nav nav-stacked nav-pills",
+							"items": [
+								{
+									"title": "Profile",
+									"route": "user_settings.profile"
+								},
+								{
+									"title": "Change password",
+									"route": "user_settings.change_pass"
+								}
+							],
+							"type": "menu"
+						}
+					],
+					"type": "page"
+				},
+				{
+					"name": "logout",
+					"template": "logout",
+					"type": "page"
+				}
+			],
+			"menus": [
+				{
+					"name": "left_menu",
+					"class": "nav navbar-nav",
+					"dest_selector": "#menu",
+					"items": [
+						{
+							"title": "Home",
+							"route": "home_private"
+						}
+					],
+					"type": "menu"
+				},
+				{
+					"name": "right_menu",
+					"class": "nav navbar-nav navbar-right",
+					"dest_selector": "#menu",
+					"items": [
+						{
+							"title": "Admin",
+							"route": "admin"
+						},
+						{
+							"title": "{{userEmail}}",
+							"items": [
+								{
+									"title": "Settings",
+									"route": "user_settings"
+								},
+								{
+									"title": "Logout",
+									"route": "logout"
+								}
+							]
+						}
+					],
+					"type": "menu"
+				}
+			],
+			"type": "zone"
+		},
+		"use_collection2": true,
+		"login_with_github": true,
+		"login_with_meteor": true,
+		"packages": {}
+	}
+}
